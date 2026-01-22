@@ -1,58 +1,46 @@
 import streamlit as st
 
-st.set_page_config(page_title="Optisched", layout="wide")
+st.set_page_config(page_title="OptiSched", layout="wide")
 
-# --- Main Page ---
-st.title("AI-Powered Adaptive Study Planner")
-st.subheader("InfoMatrix Asia 2026 - AI Programming Section")
-st.write("""
-Welcome! Use the buttons below to navigate between features of your study planner.
-""")
+# Page state
+if "page" not in st.session_state:
+    st.session_state.page = "main"
 
-# --- Buttons for different pages ---
-st.header("Navigation")
+# -------- Main Page --------
+if st.session_state.page == "main":
 
-col1, col2 = st.columns(2)
+    # Centered title and button
+    col1, col2, col3 = st.columns([1,2,1])
+    with col2:
+        st.title("OptiSched")
+        st.subheader("AI-Powered Adaptive Study Planner")
+        st.write("")
+        if st.button("Let's Get Started"):
+            st.session_state.page = "login"
 
-with col1:
-    if st.button("Create / Upload Timetable"):
-        st.session_state['page'] = 'timetable'
+    st.write("\n\n\n")
 
-with col2:
-    if st.button("Account / Login"):
-        st.session_state['page'] = 'account'
+    # Scroll section: Why OptiSched
+    st.header("Why OptiSched?")
+    st.info("""
+    This is a placeholder for your project motivation.
 
-if st.button("AI Study Plan Generator"):
-    st.session_state['page'] = 'generator'
+    Here you will later describe:
+    - The problem students face
+    - Why planning is difficult and exhausting
+    - How OptiSched helps and why it is useful for students and society
+    """)
 
-if st.button("Visualization & Export"):
-    st.session_state['page'] = 'visualization'
+    # Scroll section: Features
+    st.header("Features")
+    st.markdown("""
+    - Feature 1: (write description later)  
+    - Feature 2: (write description later)  
+    - Feature 3: (write description later)  
+    - Feature 4: (write description later)  
+    """)
 
-st.markdown("---")
-
-# --- Load the page based on button click ---
-if 'page' not in st.session_state:
-    st.session_state['page'] = 'main'
-
-if st.session_state['page'] == 'main':
-    st.info("Select a feature above to start using the planner.")
-
-elif st.session_state['page'] == 'timetable':
-    # import timetable page
-    import frontend.pages.timetable_creation as timetable
-    timetable.show()
-
-elif st.session_state['page'] == 'account':
-    # import account/login page
+# -------- Login / Registration Page --------
+elif st.session_state.page == "login":
     import frontend.pages.account as account
     account.show()
-
-elif st.session_state['page'] == 'generator':
-    # import AI generator page
-    import frontend.pages.generate_plan as generator
-    generator.show()
-
-elif st.session_state['page'] == 'visualization':
-    # import visualization page
-    import frontend.pages.visualization as viz
-    viz.show()
