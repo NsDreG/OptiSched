@@ -61,22 +61,22 @@ if st.session_state.page == "main":
     - Feature 4: (write description later)  
     """)
 
-# -------- Login / Registration Page --------
+# Login / Registration Page
 elif st.session_state.page == "login":
-    import frontend.pages.account as account
+    import Frontend.pages.account as account  # Capital F
     account.show()
 
-# -------- Timetable Page --------
+# Timetable Page
 elif st.session_state.page == "timetable":
-    import frontend.pages.timetable_creation as timetable
-    timetable.show()  # Each page has a `show()` function
+    import Frontend.pages.timetable_creation as timetable
+    timetable.show()
 
-# -------- AI Study Plan Page --------
+# AI Study Plan Page
 elif st.session_state.page == "ai_plan":
-    import frontend.pages.generate_plan as ai_plan
-    ai_plan.show()  # Each page has a `show()` function
+    import Frontend.pages.generate_plan as ai_plan
+    ai_plan.show()
 
-# -------- Visualization Page --------
+# Visualization Page
 elif st.session_state.page == "visualization":
-    import frontend.pages.visualization as visualization
-    visualization.show()  # Each page has a `show()` function
+    import Frontend.pages.visualization as visualization
+    visualization.show()
