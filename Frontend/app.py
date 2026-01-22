@@ -34,8 +34,6 @@ menu_bar()  # Display menu on every page
 
 # -------- Main Page --------
 if st.session_state.page == "main":
-
-    # Centered title and button
     col1, col2, col3 = st.columns([1,2,1])
     with col2:
         st.title("OptiSched")
@@ -45,8 +43,6 @@ if st.session_state.page == "main":
             st.session_state.page = "login"
 
     st.write("\n\n\n")
-
-    # Scroll section: Why OptiSched
     st.header("Why OptiSched?")
     st.info("""
     This is a placeholder for your project motivation.
@@ -57,7 +53,6 @@ if st.session_state.page == "main":
     - How OptiSched helps and why it is useful for students and society
     """)
 
-    # Scroll section: Features
     st.header("Features")
     st.markdown("""
     - Feature 1: (write description later)  
@@ -73,26 +68,15 @@ elif st.session_state.page == "login":
 
 # -------- Timetable Page --------
 elif st.session_state.page == "timetable":
-    st.title("Timetable Creation")
-    if st.session_state.user:
-        st.write(f"Welcome, {st.session_state.user}! Here you can create your timetable.")
-        # Placeholder for timetable form / chatbot
-        st.info("Timetable creation form and chatbot will be implemented here.")
-    else:
-        st.warning("Please log in first to access the timetable.")
+    import frontend.pages.timetable_creation as timetable
+    timetable.show()  # Each page has a `show()` function
 
 # -------- AI Study Plan Page --------
 elif st.session_state.page == "ai_plan":
-    st.title("AI Study Plan")
-    if st.session_state.user:
-        st.info("AI-generated study plan will be displayed here.")
-    else:
-        st.warning("Please log in first to view your AI study plan.")
+    import frontend.pages.generate_plan as ai_plan
+    ai_plan.show()  # Each page has a `show()` function
 
 # -------- Visualization Page --------
 elif st.session_state.page == "visualization":
-    st.title("Visualization")
-    if st.session_state.user:
-        st.info("Timetable visualizations and charts will be displayed here.")
-    else:
-        st.warning("Please log in first to view visualizations.")
+    import frontend.pages.visualization as visualization
+    visualization.show()  # Each page has a `show()` function
