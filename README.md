@@ -21,3 +21,13 @@ Features
   Natural language chatbot
   Weekly calendar visualization
   PDF export
+How to Run
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/ai-adaptive-study-planner.git
+cd ai-adaptive-study-planner
+
+Install dependencies:
+pip install -r requirements.txt
+Run the web app:
+streamlit run frontend/app.py
