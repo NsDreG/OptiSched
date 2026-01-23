@@ -42,7 +42,7 @@ if st.session_state.page == "main":
     """)
 #Account
 elif st.session_state.page == "login":
-    from pages import account
+    import pages.account
 #Workspace
 elif st.session_state.page == "workspace":
     if st.session_state.user:
