@@ -19,6 +19,8 @@ def save_user(username, password):
         writer = csv.writer(file)
         writer.writerow([username, password])
 #Streamlit UI
+elif st.session_state.page == "login":
+    import pages.account  # UI only shows if page state is 'login'
 st.title("Account")
 if "user" not in st.session_state:
     st.session_state.user = None
