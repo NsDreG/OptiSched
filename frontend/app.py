@@ -1,15 +1,12 @@
 import streamlit as st
 
 st.set_page_config(page_title="OptiSched", layout="wide")
-
-# Session state initialization
 if "page" not in st.session_state:
     st.session_state.page = "main"
 
 if "user" not in st.session_state:
     st.session_state.user = None
-
-# -------- Navigation Bar --------
+#Navigation
 def navbar():
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -25,8 +22,7 @@ def navbar():
 st.markdown("---")
 navbar()
 st.markdown("---")
-
-# -------- Main Page --------
+#Main
 if st.session_state.page == "main":
     col1, col2, col3 = st.columns([1,2,1])
     with col2:
@@ -35,25 +31,19 @@ if st.session_state.page == "main":
         st.write("")
         if st.button("Let's Get Started"):
             st.session_state.page = "login"
-
     st.write("\n\n\n")
-
     st.header("Why OptiSched?")
     st.info("Placeholder for your problem statement and social importance.")
-
     st.header("Key Features")
     st.markdown("""
     - Natural language timetable editing  
     - AI-assisted schedule optimization  
     - Real-time visual timetable updates  
     """)
-
-# -------- Account Page --------
+#Account
 elif st.session_state.page == "login":
     from pages import account
-    account.show()
-
-# -------- Workspace Page --------
+#Workspace
 elif st.session_state.page == "workspace":
     if st.session_state.user:
         from pages import workspace
