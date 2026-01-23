@@ -50,13 +50,13 @@ if st.session_state.page == "main":
 
 # -------- Account Page --------
 elif st.session_state.page == "login":
-    from pages import account as account
+    from pages import account
     account.show()
 
 # -------- Workspace Page --------
 elif st.session_state.page == "workspace":
     if st.session_state.user:
-        from pages import workspace as workspace
+        from pages import workspace
         workspace.show()
     else:
         st.warning("Please log in first to access the workspace.")
