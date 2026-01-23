@@ -63,7 +63,7 @@ if st.session_state.page == "main":
 
 # Login / Registration Page
 elif st.session_state.page == "login":
-    import frontend.pages.account as account  # Capital F
+    import frontend.pages.account as account
     account.show()
 
 # Timetable Page
