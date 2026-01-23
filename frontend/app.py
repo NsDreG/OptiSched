@@ -2,35 +2,29 @@ import streamlit as st
 
 st.set_page_config(page_title="OptiSched", layout="wide")
 
-# Page state
+# Session state initialization
 if "page" not in st.session_state:
     st.session_state.page = "main"
 
-# Optional: Logged-in user
 if "user" not in st.session_state:
     st.session_state.user = None
 
-# -------- Menu Bar --------
-def menu_bar():
-    col1, col2, col3, col4, col5 = st.columns(5)
-    
+# -------- Navigation Bar --------
+def navbar():
+    col1, col2, col3 = st.columns(3)
     with col1:
         if st.button("Home"):
             st.session_state.page = "main"
     with col2:
-        if st.button("Login / Register"):
+        if st.button("Account"):
             st.session_state.page = "login"
     with col3:
-        if st.button("Timetable"):
-            st.session_state.page = "timetable"
-    with col4:
-        if st.button("AI Study Plan"):
-            st.session_state.page = "ai_plan"
-    with col5:
-        if st.button("Visualization"):
-            st.session_state.page = "visualization"
+        if st.button("Workspace"):
+            st.session_state.page = "workspace"
 
-menu_bar()  # Display menu on every page
+st.markdown("---")
+navbar()
+st.markdown("---")
 
 # -------- Main Page --------
 if st.session_state.page == "main":
@@ -43,40 +37,28 @@ if st.session_state.page == "main":
             st.session_state.page = "login"
 
     st.write("\n\n\n")
+
     st.header("Why OptiSched?")
-    st.info("""
-    This is a placeholder for your project motivation.
+    st.info("Placeholder for your problem statement and social importance.")
 
-    Here you will later describe:
-    - The problem students face
-    - Why planning is difficult and exhausting
-    - How OptiSched helps and why it is useful for students and society
-    """)
-
-    st.header("Features")
+    st.header("Key Features")
     st.markdown("""
-    - Feature 1: (write description later)  
-    - Feature 2: (write description later)  
-    - Feature 3: (write description later)  
-    - Feature 4: (write description later)  
+    - Natural language timetable editing  
+    - AI-assisted schedule optimization  
+    - Real-time visual timetable updates  
     """)
 
-# Login / Registration Page
+# -------- Account Page --------
 elif st.session_state.page == "login":
-    import frontend.pages.account as account
+    import pages.account as account
     account.show()
 
-# Timetable Page
-elif st.session_state.page == "timetable":
-    import frontend.pages.timetable_creation as timetable
-    timetable.show()
-
-# AI Study Plan Page
-elif st.session_state.page == "ai_plan":
-    import frontend.pages.generate_plan as ai_plan
-    ai_plan.show()
-
-# Visualization Page
-elif st.session_state.page == "visualization":
-    import frontend.pages.visualization as visualization
-    visualization.show()
+# -------- Workspace Page --------
+elif st.session_state.page == "workspace":
+    if st.session_state.user:
+        import pages.workspace as workspace
+        workspace.show()
+    else:
+        st.warning("Please log in first to access the workspace.")
+        if st.button("Go to Login"):
+            st.session_state.page = "login"
