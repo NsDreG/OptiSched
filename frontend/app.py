@@ -49,7 +49,7 @@ if st.session_state.page == "main":
         st.write("")
         if st.button("Start Planning"):
             st.session_state.page = "workspace"
-            st.experimental_rerun()
+            st.rerun()
 
     st.write("\n\n")
     st.markdown("### Why OptiSched?")
