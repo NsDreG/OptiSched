@@ -65,6 +65,10 @@ if st.session_state.page == "main":
 
 # ---------- WORKSPACE ----------
 elif st.session_state.page == "workspace":
+    if st.button("← Back to Main Page"):
+        st.session_state.page = "main"
+        st.rerun()
+
     st.markdown("## Your AI Study Workspace")
 
     left, right = st.columns([1,2])
