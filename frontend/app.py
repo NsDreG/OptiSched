@@ -1,54 +1,83 @@
 import streamlit as st
 
 st.set_page_config(page_title="OptiSched", layout="wide")
+
+# ---------- STATE ----------
 if "page" not in st.session_state:
     st.session_state.page = "main"
 
-if "user" not in st.session_state:
-    st.session_state.user = None
-#Navigation
-def navbar():
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        if st.button("Home"):
-            st.session_state.page = "main"
-    with col2:
-        if st.button("Account"):
-            st.session_state.page = "login"
-    with col3:
-        if st.button("Workspace"):
-            st.session_state.page = "workspace"
+# ---------- COSMIC THEME ----------
+st.markdown("""
+<style>
+body {
+    background-color: #0b0b14;
+}
+.stApp {
+    background: radial-gradient(circle at top, #1a0f2e, #05010a);
+    color: white;
+}
+h1, h2, h3 {
+    color: #c77dff;
+}
+button {
+    background: linear-gradient(135deg, #7b2cff, #c77dff);
+    color: white;
+    border-radius: 12px;
+    height: 3em;
+    width: 100%;
+    font-size: 18px;
+}
+.chatbox {
+    background: rgba(30, 0, 60, 0.6);
+    border-radius: 15px;
+    padding: 20px;
+}
+.tablebox {
+    background: rgba(10, 10, 30, 0.7);
+    border-radius: 15px;
+    padding: 20px;
+}
+</style>
+""", unsafe_allow_html=True)
 
-st.markdown("---")
-navbar()
-st.markdown("---")
-#Main
+# ---------- MAIN PAGE ----------
 if st.session_state.page == "main":
     col1, col2, col3 = st.columns([1,2,1])
     with col2:
         st.title("OptiSched")
         st.subheader("AI-Powered Adaptive Study Planner")
         st.write("")
-        if st.button("Let's Get Started"):
-            st.session_state.page = "login"
-    st.write("\n\n\n")
-    st.header("Why OptiSched?")
-    st.info("Placeholder for your problem statement and social importance.")
-    st.header("Key Features")
+        if st.button("Start Planning"):
+            st.session_state.page = "workspace"
+            st.experimental_rerun()
+
+    st.write("\n\n")
+    st.markdown("### Why OptiSched?")
+    st.info("Replace this with your competition explanation about students, overload, and AI planning.")
+
+    st.markdown("### Key Features")
     st.markdown("""
-    - Natural language timetable editing  
-    - AI-assisted schedule optimization  
-    - Real-time visual timetable updates  
+    • Natural language timetable editing  
+    • AI schedule optimization  
+    • Real-time visual updates  
+    • Smart workload balance  
     """)
-#Account
-elif st.session_state.page == "login":
-    import pages.account
-#Workspace
+
+# ---------- WORKSPACE ----------
 elif st.session_state.page == "workspace":
-    if st.session_state.user:
-        from pages import workspace
-        workspace.show()
-    else:
-        st.warning("Please log in first to access the workspace.")
-        if st.button("Go to Login"):
-            st.session_state.page = "login"
+    st.markdown("## Your AI Study Workspace")
+
+    left, right = st.columns([1,2])
+
+    with left:
+        st.markdown('<div class="chatbox">', unsafe_allow_html=True)
+        st.subheader("AI Assistant")
+        st.text_area("Chat here (e.g. 'Add math test on Monday at 3pm')", height=200)
+        st.button("Send")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    with right:
+        st.markdown('<div class="tablebox">', unsafe_allow_html=True)
+        st.subheader("Timetable")
+        st.info("Your dynamically updated schedule will appear here.")
+        st.markdown('</div>', unsafe_allow_html=True)
