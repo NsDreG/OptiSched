@@ -40,10 +40,10 @@ def main_page():
 
 
 
-
-
-DATA_DIR = "data"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "data")
 TEMPLATE_FILE = os.path.join(DATA_DIR, "sample.xlsx")
+
 
 # ------------------ WORKSPACE PAGE ------------------
 def workspace_page():
