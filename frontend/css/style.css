@@ -1,8 +1,14 @@
-/* ---------- Body & Background ---------- */
-body {
+/* ---------- Entire App Background ---------- */
+[data-testid="stAppViewContainer"] {
     background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
     color: #ffffff;
     font-family: 'Helvetica', sans-serif;
+}
+
+/* Sidebar Background (if used) */
+[data-testid="stSidebar"] {
+    background-color: #1a1a2e;
+    color: #ffffff;
 }
 
 /* ---------- Titles ---------- */
