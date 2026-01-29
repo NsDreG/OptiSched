@@ -10,7 +10,10 @@ if "page" not in st.session_state:
 if "timetable_df" not in st.session_state:
     st.session_state.timetable_df = None
 
-# ------------------ MAIN PAGE ------------------
+
+
+
+
 def main_page():
     st.title("OptiSched")
     st.subheader("AI Powered Adaptive Study Planner")
@@ -33,7 +36,11 @@ def main_page():
     - Export and import of schedules  
     """)
 
-# ------------------ WORKSPACE PAGE ------------------
+
+
+
+
+
 def workspace_page():
     st.header("AI Workspace")
 
@@ -44,9 +51,9 @@ def workspace_page():
 
     # -------- Download Template from file --------
     st.subheader("Download Template")
-    # Construct path to template relative to app.py
+    # Path relative to this file
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # frontend/
-    TEMPLATE_FILE = os.path.join(BASE_DIR, "..", "data", "sample.xlsx")  # ../data/sample.xlsx
+    TEMPLATE_FILE = os.path.join(BASE_DIR, "data", "sample.xlsx")  # frontend/data/sample.xlsx
 
     if os.path.exists(TEMPLATE_FILE):
         with open(TEMPLATE_FILE, "rb") as f:
@@ -68,16 +75,15 @@ def workspace_page():
     
     if uploaded_file:
         try:
+            # Read uploaded file
             if uploaded_file.name.endswith(".xlsx"):
                 df = pd.read_excel(uploaded_file)
             else:
                 df = pd.read_csv(uploaded_file)
 
-            # -------- Validation by days (columns) --------
+            # -------- Validation: columns must be Monday → Sunday --------
             expected_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-            df_days = list(df.columns)
-
-            if df_days != expected_days:
+            if list(df.columns) != expected_days:
                 st.error(f"Invalid format! Columns must be exactly: {expected_days}")
             else:
                 st.session_state.timetable_df = df
@@ -96,8 +102,8 @@ def workspace_page():
         if st.session_state.timetable_df is not None:
             user_message = st.text_area("Type your instruction (e.g. Add Math test on Friday at 10:00)")
             if st.button("Send"):
+                # Placeholder: AI processing will go here
                 st.info("Later this will be processed by the AI planner.")
-
         else:
             st.info("Upload a timetable first to interact with AI.")
 
@@ -112,7 +118,9 @@ def workspace_page():
         else:
             st.info("Timetable will appear here after upload.")
 
-# ------------------ PAGE CONTROL ------------------
+
+
+
 if st.session_state.page == "main":
     main_page()
 elif st.session_state.page == "workspace":
