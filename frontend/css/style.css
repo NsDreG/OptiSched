@@ -1,84 +1,63 @@
-/* ---------- Entire App Background ---------- */
-[data-testid="stAppViewContainer"] {
-    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-    color: #ffffff;
-    font-family: 'Helvetica', sans-serif;
+/* ---------- Body ---------- */
+body {
+    background-color: #ffffff; /* white background */
+    color: #333333; /* dark text for readability */
+    font-family: 'Segoe UI', sans-serif;
 }
 
-/* ---------- Section Cards / Blocks ---------- */
-.section-block {
-    background: #1e1e2f;          /* Base dark block */
-    border: 1px solid #7b2ff7;    /* Purple border */
-    border-radius: 12px;
-    padding: 15px 20px;
-    margin-bottom: 20px;
+/* ---------- Headers ---------- */
+h1, h2, h3, h4 {
+    color: #6a0dad; /* soft purple for headings */
 }
 
-/* Alternate block color (slightly lighter) */
-.section-block.alt {
-    background: #26263f;          /* Slightly lighter dark-purple */
-    border: 1px solid #d9b3ff;    /* Lighter purple border */
-}
-
-/* Section headings */
-.section-block h2, .section-block h3, .section-block h4 {
-    color: #d9b3ff;
-}
-
-/* Sidebar Background (if used) */
-[data-testid="stSidebar"] {
-    background-color: #1a1a2e;
-    color: #ffffff;
-}
-
-/* ---------- Titles ---------- */
-h1, h2, h3 {
-    color: #d9b3ff;
-    text-align: center;
-}
-
-/* ---------- Subtitles / Info ---------- */
-.stSubheader {
-    color: #e0c0ff;
-}
-
-/* ---------- Buttons ---------- */
-button {
-    background: linear-gradient(90deg, #7b2ff7, #f107a3);
-    color: white;
-    font-weight: bold;
-    padding: 12px 25px;
-    border-radius: 10px;
-    font-size: 16px;
-    margin: 10px 0;
-    cursor: pointer;
-}
-
-/* Button hover effect */
-button:hover {
-    opacity: 0.85;
+/* ---------- Section blocks ---------- */
+div.block-container {
+    padding: 20px;
+    margin: 10px auto;
+    background-color: #f5f5f5; /* light grey block background */
+    border-radius: 8px;
 }
 
 /* ---------- Timetable DataFrame ---------- */
-.stDataFrame {
-    border: 2px solid #7b2ff7;
+[data-testid="stDataFrameContainer"] {
+    border: 2px solid #6a0dad; /* purple outline */
     border-radius: 8px;
-    background-color: #1e1e2f !important;
-    color: #ffffff !important;
+    padding: 10px;
+    background: #ffffff; /* white table background */
 }
 
-/* ---------- Chatbot / Textarea ---------- */
+/* ---------- Buttons ---------- */
+.stButton>button {
+    background: linear-gradient(90deg, #8a2be2, #da70d6); /* purple gradient */
+    color: white;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 8px 20px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.stButton>button:hover {
+    transform: scale(1.05);
+}
+
+/* ---------- Text areas (AI assistant) ---------- */
 textarea {
-    background-color: #2a2a40;
-    border: 2px solid #7b2ff7;
+    background-color: #f5f5f5;
+    color: #333333;
     border-radius: 6px;
-    color: #ffffff;
     padding: 8px;
-    width: 100%;
+    border: 1px solid #6a0dad;
 }
 
-/* ---------- Sections / Dividers ---------- */
-.stDivider {
-    border-top: 2px solid #7b2ff7;
-    margin: 20px 0;
+/* ---------- Download buttons ---------- */
+div.stDownloadButton>button {
+    background: linear-gradient(90deg, #8a2be2, #da70d6);
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+    border: none;
+    padding: 6px 16px;
+    cursor: pointer;
 }
