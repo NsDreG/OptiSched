@@ -16,7 +16,7 @@ def load_css():
         with open(CSS_FILE) as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-
+load_css()
 def main_page():
     st.title("OptiSched")
     st.subheader("AI Powered Adaptive Study Planner")
