@@ -11,6 +11,11 @@ if "timetable_df" not in st.session_state:
     st.session_state.timetable_df = None
 
 
+def load_css(self):
+        CSS_FILE = os.path.join(os.path.dirname(__file__), "css", "style.css")
+        if os.path.exists(CSS_FILE):
+            with open(CSS_FILE) as f:
+                st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 
 
