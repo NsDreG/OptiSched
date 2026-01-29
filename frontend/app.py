@@ -98,28 +98,31 @@ def workspace_page():
     st.write("---")
 
     # -------- Chatbot + Timetable UI --------
-    left, right = st.columns([1, 2])
+  left_col, right_col = st.columns([1,2])
 
-    with left:
-        st.subheader("AI Assistant")
-        if st.session_state.timetable_df is not None:
-            user_message = st.text_area("Type your instruction (e.g. Add Math test on Friday at 10:00)")
-            if st.button("Send"):
-                # Placeholder: AI processing will go here
-                st.info("Later this will be processed by the AI planner.")
-        else:
-            st.info("Upload a timetable first to interact with AI.")
+# Wrap both in containers with same min-height
+with left_col:
+    st.markdown('<div class="ai-block" style="height:400px;">', unsafe_allow_html=True)
+    st.subheader("AI Assistant")
+    if st.session_state.timetable_df is not None:
+        user_message = st.text_area("Type your instruction", height=300)
+        if st.button("Send"):
+            st.info("Instruction will be processed by the AI planner")
+    else:
+        st.info("Upload a timetable first to interact with AI.")
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    with right:
-        st.subheader("Timetable")
-        if st.session_state.timetable_df is not None:
-            st.dataframe(st.session_state.timetable_df)
+with right_col:
+    st.markdown('<div class="timetable-block" style="height:400px; overflow-y:auto;">', unsafe_allow_html=True)
+    st.subheader("Timetable")
+    if st.session_state.timetable_df is not None:
+        st.dataframe(st.session_state.timetable_df)
+        csv_data = st.session_state.timetable_df.to_csv(index=False).encode("utf-8")
+        st.download_button("Download Updated Timetable", csv_data, "optisched_timetable.csv", "text/csv")
+    else:
+        st.info("Timetable will appear here after upload.")
+    st.markdown('</div>', unsafe_allow_html=True)
 
-            # Download updated timetable as CSV
-            csv_data = st.session_state.timetable_df.to_csv(index=False).encode("utf-8")
-            st.download_button("Download Updated Timetable", csv_data, "optisched_timetable.csv", "text/csv")
-        else:
-            st.info("Timetable will appear here after upload.")
 
 
 
