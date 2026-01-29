@@ -98,30 +98,79 @@ def workspace_page():
     st.write("---")
 
     # -------- Chatbot + Timetable UI --------
-  left_col, right_col = st.columns([1,2])
+def workspace_page():
+    st.header("AI Workspace")
 
-# Wrap both in containers with same min-height
-with left_col:
-    st.markdown('<div class="ai-block" style="height:400px;">', unsafe_allow_html=True)
-    st.subheader("AI Assistant")
-    if st.session_state.timetable_df is not None:
-        user_message = st.text_area("Type your instruction", height=300)
-        if st.button("Send"):
-            st.info("Instruction will be processed by the AI planner")
-    else:
-        st.info("Upload a timetable first to interact with AI.")
-    st.markdown('</div>', unsafe_allow_html=True)
+    # Back button
+    if st.button("← Back to Main Page"):
+        st.session_state.page = "main"
+        st.rerun()
 
-with right_col:
-    st.markdown('<div class="timetable-block" style="height:400px; overflow-y:auto;">', unsafe_allow_html=True)
-    st.subheader("Timetable")
-    if st.session_state.timetable_df is not None:
-        st.dataframe(st.session_state.timetable_df)
-        csv_data = st.session_state.timetable_df.to_csv(index=False).encode("utf-8")
-        st.download_button("Download Updated Timetable", csv_data, "optisched_timetable.csv", "text/csv")
+    st.write("---")
+
+    # Download template
+    st.subheader("Download Template")
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    TEMPLATE_FILE = os.path.join(BASE_DIR, "data", "sample.xlsx")
+    if os.path.exists(TEMPLATE_FILE):
+        with open(TEMPLATE_FILE, "rb") as f:
+            excel_bytes = f.read()
+        st.download_button(
+            "Download Timetable Template",
+            excel_bytes,
+            "optisched_template.xlsx",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
     else:
-        st.info("Timetable will appear here after upload.")
-    st.markdown('</div>', unsafe_allow_html=True)
+        st.error(f"Template file not found! Expected at {TEMPLATE_FILE}")
+
+    st.write("---")
+
+    # Upload timetable
+    st.subheader("Upload Your Timetable")
+    uploaded_file = st.file_uploader("Upload Excel or CSV file", type=["xlsx", "csv"])
+    if uploaded_file:
+        try:
+            if uploaded_file.name.endswith(".xlsx"):
+                df = pd.read_excel(uploaded_file)
+            else:
+                df = pd.read_csv(uploaded_file)
+
+            expected_days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
+            if list(df.columns) != expected_days:
+                st.error(f"Invalid format! Columns must be exactly: {expected_days}")
+            else:
+                st.session_state.timetable_df = df
+                st.success("Timetable loaded successfully!")
+        except Exception as e:
+            st.error(f"Error loading file: {e}")
+
+    st.write("---")
+
+    # AI Assistant + Timetable
+    left_col, right_col = st.columns([1, 2])
+
+    with left_col:
+        st.subheader("AI Assistant")
+        if st.session_state.timetable_df is not None:
+            user_message = st.text_area("Type your instruction", height=350)
+            if st.button("Send"):
+                st.info("Instruction will be processed by the AI planner")
+        else:
+            st.info("Upload a timetable first to interact with AI.")
+
+    with right_col:
+        st.subheader("Timetable")
+        if st.session_state.timetable_df is not None:
+            # Display dataframe in scrollable container
+            st.dataframe(
+                st.session_state.timetable_df,
+                height=350
+            )
+            csv_data = st.session_state.timetable_df.to_csv(index=False).encode("utf-8")
+            st.download_button("Download Updated Timetable", csv_data, "optisched_timetable.csv", "text/csv")
+        else:
+            st.info("Timetable will appear here after upload.")
 
 
 
