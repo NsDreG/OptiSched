@@ -1,0 +1,58 @@
+/* ---------- Body & Background ---------- */
+body {
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    color: #ffffff;
+    font-family: 'Helvetica', sans-serif;
+}
+
+/* ---------- Titles ---------- */
+h1, h2, h3 {
+    color: #d9b3ff;
+    text-align: center;
+}
+
+/* ---------- Subtitles / Info ---------- */
+.stSubheader {
+    color: #e0c0ff;
+}
+
+/* ---------- Buttons ---------- */
+button {
+    background: linear-gradient(90deg, #7b2ff7, #f107a3);
+    color: white;
+    font-weight: bold;
+    padding: 12px 25px;
+    border-radius: 10px;
+    font-size: 16px;
+    margin: 10px 0;
+    cursor: pointer;
+}
+
+/* Button hover effect */
+button:hover {
+    opacity: 0.85;
+}
+
+/* ---------- Timetable DataFrame ---------- */
+.stDataFrame {
+    border: 2px solid #7b2ff7;
+    border-radius: 8px;
+    background-color: #1e1e2f !important;
+    color: #ffffff !important;
+}
+
+/* ---------- Chatbot / Textarea ---------- */
+textarea {
+    background-color: #2a2a40;
+    border: 2px solid #7b2ff7;
+    border-radius: 6px;
+    color: #ffffff;
+    padding: 8px;
+    width: 100%;
+}
+
+/* ---------- Sections / Dividers ---------- */
+.stDivider {
+    border-top: 2px solid #7b2ff7;
+    margin: 20px 0;
+}
