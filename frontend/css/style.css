@@ -62,4 +62,15 @@ div.stDownloadButton>button {
     padding: 6px 16px;
     cursor: pointer;
 }
+/* Force AI + timetable blocks to align vertically */
+.ai-block, .timetable-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* top-align content */
+}
+
+/* Scroll for timetable if content is too long */
+.timetable-block {
+    overflow-y: auto;
+}
 
