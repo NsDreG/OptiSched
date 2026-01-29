@@ -1,87 +1,93 @@
 import streamlit as st
+import pandas as pd
+
 
 st.set_page_config(page_title="OptiSched", layout="wide")
 
-# ---------- STATE ----------
 if "page" not in st.session_state:
     st.session_state.page = "main"
 
-# ---------- COSMIC THEME ----------
-st.markdown("""
-<style>
-body {
-    background-color: #0b0b14;
-}
-.stApp {
-    background: radial-gradient(circle at top, #1a0f2e, #05010a);
-    color: white;
-}
-h1, h2, h3 {
-    color: #c77dff;
-}
-button {
-    background: linear-gradient(135deg, #7b2cff, #c77dff);
-    color: white;
-    border-radius: 12px;
-    height: 3em;
-    width: 100%;
-    font-size: 18px;
-}
-.chatbox {
-    background: rgba(30, 0, 60, 0.6);
-    border-radius: 15px;
-    padding: 20px;
-}
-.tablebox {
-    background: rgba(10, 10, 30, 0.7);
-    border-radius: 15px;
-    padding: 20px;
-}
-</style>
-""", unsafe_allow_html=True)
+if "timetable_df" not in st.session_state:
+    st.session_state.timetable_df = None
 
-# ---------- MAIN PAGE ----------
-if st.session_state.page == "main":
-    col1, col2, col3 = st.columns([1,2,1])
-    with col2:
-        st.title("OptiSched")
-        st.subheader("AI-Powered Adaptive Study Planner")
-        st.write("")
-        if st.button("Start Planning"):
-            st.session_state.page = "workspace"
-            st.rerun()
 
-    st.write("\n\n")
+
+
+
+
+def main_page():
+    st.title("OptiSched")
+    st.subheader("AI Powered Adaptive Study Planner")
+
+    st.write("Organize your school life intelligently with AI.")
+    st.write("Upload your timetable, talk to the assistant, and let the system optimize your schedule.")
+
+    if st.button("Start Planning"):
+        st.session_state.page = "workspace"
+        st.rerun()
+
     st.markdown("### Why OptiSched?")
-    st.info("Replace this with your competition explanation about students, overload, and AI planning.")
+    st.info("This is where you will later write about the problem, relevance, and social usefulness.")
 
     st.markdown("### Key Features")
     st.markdown("""
-    • Natural language timetable editing  
-    • AI schedule optimization  
-    • Real-time visual updates  
-    • Smart workload balance  
+    - Natural language timetable editing  
+    - AI-based schedule optimization  
+    - Real-time visual updates  
+    - Export and import of schedules  
     """)
 
-# ---------- WORKSPACE ----------
-elif st.session_state.page == "workspace":
+
+
+
+
+
+
+
+
+
+def workspace_page():
     if st.button("← Back to Main Page"):
         st.session_state.page = "main"
         st.rerun()
 
-    st.markdown("## Your AI Study Workspace")
+    st.header("AI Workspace")
 
-    left, right = st.columns([1,2])
+    # Upload timetable
+    uploaded_file = st.file_uploader("Upload your timetable (Excel format)", type=["xlsx", "csv"])
+
+    if uploaded_file:
+        if uploaded_file.name.endswith(".xlsx"):
+            st.session_state.timetable_df = pd.read_excel(uploaded_file)
+        else:
+            st.session_state.timetable_df = pd.read_csv(uploaded_file)
+
+    left, right = st.columns([1, 2])
 
     with left:
-        st.markdown('<div class="chatbox">', unsafe_allow_html=True)
         st.subheader("AI Assistant")
-        st.text_area("Chat here (e.g. 'Add math test on Monday at 3pm')", height=200)
-        st.button("Send")
-        st.markdown('</div>', unsafe_allow_html=True)
+        user_message = st.text_area("Type your instruction (e.g. Add Math test on Friday at 10:00)")
+        if st.button("Send"):
+            st.info("Later this will be sent to the NLP module and planner engine.")
 
     with right:
-        st.markdown('<div class="tablebox">', unsafe_allow_html=True)
         st.subheader("Timetable")
-        st.info("Your dynamically updated schedule will appear here.")
-        st.markdown('</div>', unsafe_allow_html=True)
+
+        if st.session_state.timetable_df is not None:
+            st.dataframe(st.session_state.timetable_df)
+
+            csv = st.session_state.timetable_df.to_csv(index=False).encode("utf-8")
+            st.download_button("Download Updated Timetable", csv, "optisched_timetable.csv", "text/csv")
+        else:
+            st.info("Upload a timetable to begin.")
+
+
+
+
+
+
+if st.session_state.page == "main":
+    main_page()
+
+elif st.session_state.page == "workspace":
+    workspace_page()
