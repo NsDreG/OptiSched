@@ -5,6 +5,26 @@
     font-family: 'Helvetica', sans-serif;
 }
 
+/* ---------- Section Cards / Blocks ---------- */
+.section-block {
+    background: #1e1e2f;          /* Base dark block */
+    border: 1px solid #7b2ff7;    /* Purple border */
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+}
+
+/* Alternate block color (slightly lighter) */
+.section-block.alt {
+    background: #26263f;          /* Slightly lighter dark-purple */
+    border: 1px solid #d9b3ff;    /* Lighter purple border */
+}
+
+/* Section headings */
+.section-block h2, .section-block h3, .section-block h4 {
+    color: #d9b3ff;
+}
+
 /* Sidebar Background (if used) */
 [data-testid="stSidebar"] {
     background-color: #1a1a2e;
