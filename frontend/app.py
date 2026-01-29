@@ -28,25 +28,28 @@ class OptiSchedApp:
 
     # ------------------ Main Page ------------------
     def main_page(self):
-        st.title("OptiSched")
-        st.subheader("AI Powered Adaptive Study Planner")
-        st.write("Organize your school life intelligently with AI.")
-        st.write("Upload your timetable, talk to the assistant, and let the system optimize your schedule.")
+        with st.container():
+            st.markdown('<div class="section-block">', unsafe_allow_html=True)
+            st.title("OptiSched")
+            st.subheader("AI Powered Adaptive Study Planner")
+            st.write("Organize your school life intelligently with AI.")
+            st.write("Upload your timetable, talk to the assistant, and let the system optimize your schedule.")
 
-        if st.button("Start Planning"):
-            st.session_state.page = "workspace"
-            st.rerun()
+            if st.button("Start Planning"):
+                st.session_state.page = "workspace"
+                st.rerun()
 
-        st.markdown("### Why OptiSched?")
-        st.info("This is where you will later write about the problem, relevance, and social usefulness.")
+            st.markdown("### Why OptiSched?")
+            st.info("This is where you will later write about the problem, relevance, and social usefulness.")
 
-        st.markdown("### Key Features")
-        st.markdown("""
-        - Natural language timetable editing  
-        - AI-based schedule optimization  
-        - Real-time visual updates  
-        - Export and import of schedules  
-        """)
+            st.markdown("### Key Features")
+            st.markdown("""
+            - Natural language timetable editing  
+            - AI-based schedule optimization  
+            - Real-time visual updates  
+            - Export and import of schedules  
+            """)
+            st.markdown('</div>', unsafe_allow_html=True)
 
     # ------------------ Workspace Page ------------------
     def workspace_page(self):
@@ -62,7 +65,8 @@ class OptiSchedApp:
         # ---------- Template Download Block ----------
         with st.container():
             st.markdown('<div class="section-block">', unsafe_allow_html=True)
-            st.subheader("Download Template")
+            st.markdown('<h3>Download Template</h3>', unsafe_allow_html=True)
+
             BASE_DIR = os.path.dirname(os.path.abspath(__file__))
             TEMPLATE_FILE = os.path.join(BASE_DIR, "data", "sample.xlsx")
 
@@ -84,9 +88,9 @@ class OptiSchedApp:
         # ---------- Upload Timetable Block ----------
         with st.container():
             st.markdown('<div class="section-block alt">', unsafe_allow_html=True)
-            st.subheader("Upload Your Timetable")
+            st.markdown('<h3>Upload Your Timetable</h3>', unsafe_allow_html=True)
             uploaded_file = st.file_uploader("Upload Excel or CSV file", type=["xlsx", "csv"])
-            
+
             if uploaded_file:
                 try:
                     if uploaded_file.name.endswith(".xlsx"):
@@ -94,7 +98,6 @@ class OptiSchedApp:
                     else:
                         df = pd.read_csv(uploaded_file)
 
-                    # Validate columns: Monday → Sunday
                     expected_days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
                     if list(df.columns) != expected_days:
                         st.error(f"Invalid format! Columns must be: {expected_days}")
@@ -104,6 +107,7 @@ class OptiSchedApp:
 
                 except Exception as e:
                     st.error(f"Error loading file: {e}")
+
             st.markdown('</div>', unsafe_allow_html=True)
 
         st.write("---")
@@ -113,23 +117,20 @@ class OptiSchedApp:
             st.markdown('<div class="section-block">', unsafe_allow_html=True)
             left_col, right_col = st.columns([1, 2])
 
-            # AI Assistant
             with left_col:
-                st.subheader("AI Assistant")
+                st.markdown('<h3>AI Assistant</h3>', unsafe_allow_html=True)
                 if st.session_state.timetable_df is not None:
                     user_message = st.text_area(
                         "Type your instruction (e.g. Add Math test on Friday at 10:00)",
                         height=200
                     )
                     if st.button("Send"):
-                        # Placeholder for AI integration
                         st.info("Instruction will be processed by the AI planner (coming soon).")
                 else:
                     st.info("Upload a timetable first to interact with AI.")
 
-            # Timetable Table
             with right_col:
-                st.subheader("Timetable")
+                st.markdown('<h3>Timetable</h3>', unsafe_allow_html=True)
                 if st.session_state.timetable_df is not None:
                     st.dataframe(
                         st.session_state.timetable_df.style.set_table_styles([
@@ -139,7 +140,6 @@ class OptiSchedApp:
                         height=400
                     )
 
-                    # Download updated timetable as CSV
                     csv_data = st.session_state.timetable_df.to_csv(index=False).encode("utf-8")
                     st.download_button(
                         "Download Updated Timetable",
