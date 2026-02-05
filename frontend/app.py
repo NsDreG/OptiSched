@@ -2,14 +2,11 @@ import streamlit as st
 import pandas as pd
 import os
 from datetime import time
+import re
 
 from ai.nlp import Activity, resolve_schedule
 
 st.set_page_config(page_title="OptiSched", layout="wide")
-
-
-
-
 
 # -------------------- Session State --------------------
 if "page" not in st.session_state:
@@ -18,11 +15,6 @@ if "page" not in st.session_state:
 for key in ["timetable_5min", "timetable_hourly"]:
     if key not in st.session_state:
         st.session_state[key] = None
-
-
-
-
-
 
 # -------------------- CSS Loader --------------------
 def load_css():
@@ -33,13 +25,6 @@ def load_css():
 
 load_css()
 
-
-
-
-
-
-
-
 # -------------------- Time Helpers --------------------
 def row_to_time(r):
     minutes = r * 5
@@ -47,10 +32,6 @@ def row_to_time(r):
 
 def time_to_row(t):
     return (t.hour * 60 + t.minute) // 5
-
-
-
-
 
 # -------------------- Timetable ↔ AI --------------------
 def df_to_schedule(df):
@@ -94,9 +75,6 @@ def schedule_to_df(schedule):
             df.loc[s:e-1, day] = a.id
     return df
 
-
-
-
 # -------------------- 5-min / Hour --------------------
 def expand_to_5min(df):
     return pd.DataFrame({
@@ -116,26 +94,56 @@ def compress_to_hourly(df):
         for d in df.columns
     })
 
+# -------------------- Instruction Parser --------------------
+DAYS = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"]
 
+def parse_instruction(msg: str):
+    """
+    Converts natural-language instructions into Activity objects.
+    Example: 'Add physics on Monday 1pm to 3pm'
+    """
+    msg_lower = msg.lower()
 
+    # 1️⃣ Extract day
+    day_found = None
+    for day in DAYS:
+        if day in msg_lower:
+            day_found = day.capitalize()
+            break
+    if not day_found:
+        day_found = "Monday"  # default
 
-# -------------------- Instruction → Activity --------------------
-def interpret_instruction(msg: str):
-    msg = msg.lower()
+    # 2️⃣ Extract times
+    times = re.findall(r'(\d{1,2})(am|pm)?', msg_lower)
+    start, end = time(9,0), time(10,0)  # default
 
-    if "study" in msg:
-        return Activity("Study", 4, time(16, 0), time(17, 0), msg)
+    if len(times) >= 2:
+        def to_time(h, ampm):
+            h = int(h)
+            if ampm == "pm" and h != 12:
+                h += 12
+            if ampm == "am" and h == 12:
+                h = 0
+            return h
+        start_hour = to_time(times[0][0], times[0][1])
+        end_hour   = to_time(times[1][0], times[1][1])
+        start = time(start_hour, 0)
+        end = time(end_hour, 0)
 
-    if "gym" in msg:
-        return Activity("Gym", 2, time(18, 0), time(19, 0), msg)
+    # 3️⃣ Extract activity name
+    act_match = re.search(r'add\s+([a-z\s]+?)\s+on', msg_lower)
+    if act_match:
+        act_name = act_match.group(1).strip().capitalize()
+    else:
+        act_name = "Task"
 
-    if "break" in msg:
-        return Activity("Break", 1, time(13, 0), time(13, 30), msg)
-
-    return None
-
-
-
+    return Activity(
+        id=act_name,
+        priority=3,
+        start_time=start,
+        end_time=end,
+        instructions=msg
+    )
 
 # -------------------- Pages --------------------
 def main_page():
@@ -180,9 +188,6 @@ def workspace_page():
 
     st.write("---")
 
-
-
-    
     # -------- Download Template --------
     st.subheader("Download Template")
     base = os.path.dirname(os.path.abspath(__file__))
@@ -201,13 +206,9 @@ def workspace_page():
 
     st.write("---")
 
-
-
-
-    
     # -------- Upload Timetable --------
     st.subheader("Upload Timetable")
-    uploaded = st.file_uploader("Upload Excel or CSV", type=["xlsx", "csv"])
+    uploaded = st.file_uploader("Upload Excel or CSV", type=["xlsx","csv"])
 
     if uploaded:
         df = pd.read_excel(uploaded) if uploaded.name.endswith(".xlsx") else pd.read_csv(uploaded)
@@ -236,7 +237,7 @@ def workspace_page():
                 st.warning("Upload a timetable first")
                 return
 
-            activity = interpret_instruction(msg)
+            activity = parse_instruction(msg)
             if not activity:
                 st.warning("I couldn't understand that instruction.")
                 return
@@ -264,8 +265,6 @@ def workspace_page():
                 "optisched_updated_timetable.csv",
                 "text/csv"
             )
-
-
 
 # -------------------- Router --------------------
 if st.session_state.page == "main":
