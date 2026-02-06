@@ -40,7 +40,6 @@ def df_to_schedule(df):
         acts = []
         current = ""
         start = None
-
         for i, v in enumerate(df[day].fillna("")):
             if v != current:
                 if current:
@@ -53,7 +52,6 @@ def df_to_schedule(df):
                     ))
                 current = v
                 start = i if v else None
-
         if current:
             acts.append(Activity(
                 id=current,
@@ -62,7 +60,6 @@ def df_to_schedule(df):
                 end_time=time(23, 59),
                 instructions="flexible"
             ))
-
         schedule[day] = acts
     return schedule
 
@@ -104,19 +101,18 @@ def parse_instruction(msg: str):
     """
     msg_lower = msg.lower()
 
-    # 1️⃣ Extract day
+    # Extract day
     day_found = None
     for day in DAYS:
         if day in msg_lower:
             day_found = day.capitalize()
             break
     if not day_found:
-        day_found = "Monday"  # default
+        day_found = "Monday"
 
-    # 2️⃣ Extract times
+    # Extract times
     times = re.findall(r'(\d{1,2})(am|pm)?', msg_lower)
-    start, end = time(9,0), time(10,0)  # default
-
+    start, end = time(9,0), time(10,0)
     if len(times) >= 2:
         def to_time(h, ampm):
             h = int(h)
@@ -130,7 +126,7 @@ def parse_instruction(msg: str):
         start = time(start_hour, 0)
         end = time(end_hour, 0)
 
-    # 3️⃣ Extract activity name
+    # Extract activity name
     act_match = re.search(r'add\s+([a-z\s]+?)\s+on', msg_lower)
     if act_match:
         act_name = act_match.group(1).strip().capitalize()
@@ -143,7 +139,7 @@ def parse_instruction(msg: str):
         start_time=start,
         end_time=end,
         instructions=msg
-    )
+    ), day_found
 
 # -------------------- Pages --------------------
 def main_page():
@@ -161,9 +157,8 @@ def main_page():
     st.markdown("### Why OptiSched?")
     st.info(
         """
-        Students often struggle with rigid timetables that don’t adapt to
-        changing priorities. OptiSched introduces AI-driven scheduling
-        to create flexible, optimized study plans.
+        Students often struggle with rigid timetables. OptiSched introduces
+        AI-driven scheduling to create flexible, optimized study plans.
         """
     )
 
@@ -235,23 +230,24 @@ def workspace_page():
         if st.button("Send"):
             if st.session_state.timetable_5min is None:
                 st.warning("Upload a timetable first")
-                return
+            else:
+                activity, day_found = parse_instruction(msg)
+                schedule = df_to_schedule(st.session_state.timetable_5min)
 
-            activity = parse_instruction(msg)
-            if not activity:
-                st.warning("I couldn't understand that instruction.")
-                return
+                # Insert activity into correct day first
+                schedule.setdefault(day_found, []).append(activity)
 
-            schedule = df_to_schedule(st.session_state.timetable_5min)
-            result = resolve_schedule(schedule, activity)
+                # Resolve conflicts
+                result = resolve_schedule(schedule, activity)
 
-            st.session_state.timetable_5min = schedule_to_df(result.schedule)
-            st.session_state.timetable_hourly = compress_to_hourly(
-                st.session_state.timetable_5min
-            )
+                # Update in-memory timetable
+                st.session_state.timetable_5min = schedule_to_df(result.schedule)
+                st.session_state.timetable_hourly = compress_to_hourly(
+                    st.session_state.timetable_5min
+                )
 
-            st.success("Schedule optimized!")
-            st.rerun()
+                st.success("Schedule optimized!")
+                st.rerun()
 
     with right:
         st.subheader("Timetable")
