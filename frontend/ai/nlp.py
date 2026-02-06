@@ -6,6 +6,7 @@ from typing import Dict, List, Tuple, Set, Any
 import heapq
 import hashlib
 import copy
+import re
 
 # ============================================================
 # 1. Core Data Models
@@ -25,6 +26,7 @@ class CompiledConstraints:
     hard_constraints: List[Any] = field(default_factory=list)
     soft_constraints: List[Any] = field(default_factory=list)
     preferences: Dict[str, Any] = field(default_factory=dict)
+    target_day: str | None = None
 
 
 @dataclass
@@ -45,13 +47,50 @@ class Move:
 
 
 # ============================================================
-# 2. Instruction Compilation
+# 2. Instruction Compilation (IMPORTANT UPDATE)
 # ============================================================
+
+DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
+
+def _parse_time(token: str) -> time | None:
+    token = token.lower().strip()
+    match = re.match(r"(\d{1,2})(?::(\d{2}))?\s*(am|pm)?", token)
+    if not match:
+        return None
+
+    h = int(match.group(1))
+    m = int(match.group(2) or 0)
+    ampm = match.group(3)
+
+    if ampm == "pm" and h != 12:
+        h += 12
+    if ampm == "am" and h == 12:
+        h = 0
+
+    return time(h, m)
+
 
 def compile_instructions(text: str) -> CompiledConstraints:
     constraints = CompiledConstraints()
     t = text.lower()
 
+    # ---- Day detection ----
+    for d in DAYS:
+        if d.lower() in t:
+            constraints.target_day = d
+            break
+
+    # ---- Time range detection ----
+    times = re.findall(
+        r"(\d{1,2}(?::\d{2})?\s*(?:am|pm)?)", t
+    )
+    if len(times) >= 2:
+        start = _parse_time(times[0])
+        end = _parse_time(times[1])
+        if start and end:
+            constraints.preferences["forced_time"] = (start, end)
+
+    # ---- Basic semantic rules ----
     if "must" in t or "cannot" in t:
         constraints.hard_constraints.append(text)
 
@@ -80,7 +119,7 @@ def overlaps(a: Activity, b: Activity) -> bool:
 
 def find_conflicts(schedule: Dict[str, List[Activity]]) -> List[Tuple[Activity, Activity]]:
     conflicts = []
-    for day, acts in schedule.items():
+    for acts in schedule.values():
         for i in range(len(acts)):
             for j in range(i + 1, len(acts)):
                 if overlaps(acts[i], acts[j]):
@@ -89,7 +128,7 @@ def find_conflicts(schedule: Dict[str, List[Activity]]) -> List[Tuple[Activity, 
 
 
 # ============================================================
-# 4. Conflict Resolution Heuristic
+# 4. Conflict Resolution
 # ============================================================
 
 def conflict_resolution_order(a: Activity, b: Activity) -> Activity:
@@ -157,7 +196,7 @@ def hash_state(schedule):
 
 
 # ============================================================
-# 8. Search Engine
+# 8. Search Engine (UPDATED INSERT LOGIC)
 # ============================================================
 
 def resolve_schedule(
@@ -167,16 +206,31 @@ def resolve_schedule(
 ) -> ScheduleState:
 
     schedule = copy.deepcopy(base_schedule)
-    schedule.setdefault("Monday", []).append(new_activity)
 
-    start = ScheduleState(
+    constraints = compile_instructions(new_activity.instructions)
+    target_day = constraints.target_day or "Monday"
+
+    # Override time if explicitly stated
+    if "forced_time" in constraints.preferences:
+        start, end = constraints.preferences["forced_time"]
+        new_activity = Activity(
+            new_activity.id,
+            new_activity.priority,
+            start,
+            end,
+            new_activity.instructions
+        )
+
+    schedule.setdefault(target_day, []).append(new_activity)
+
+    start_state = ScheduleState(
         schedule=schedule,
         moved_activities=set(),
         score=evaluate_partial(schedule),
         depth=0,
     )
 
-    pq = [(-start.score, start)]
+    pq = [(-start_state.score, start_state)]
     visited = set()
 
     while pq:
@@ -228,4 +282,4 @@ def resolve_schedule(
                  ))
             )
 
-    return start
+    return start_state
